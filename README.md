@@ -1,8 +1,8 @@
 # Remote Chat Completion Agent Test
 
-This repo shows how we could implement a `RemoteChatCompletionAgent` that can be used to interact with a remote Semantic Kernel `ChatCompletionAgent`.
+This repo shows how we could implement a [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteChatCompletionAgent.cs) that can be used to interact with a remote Semantic Kernel `ChatCompletionAgent`.
 
-The new type `RemoteChatCompletionAgent` implements the `ChatCompletionAgent` methods using a custom HTTP client to send requests to an API that hosts the `ChatCompletionAgent` functionality. This allows us to use the same interface as the local `ChatCompletionAgent`, but with the added benefit of being able to interact with a remote service.
+The new type [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteChatCompletionAgent.cs) implements the `ChatCompletionAgent` methods using a custom HTTP client to send requests to an API that hosts the `ChatCompletionAgent` functionality. This allows us to use the same interface as the local `ChatCompletionAgent`, but with the added benefit of being able to interact with a remote service.
 
 ## Benefits of having a remote agent
 - **Scalability**: The remote agent can be hosted on a powerful server, allowing for more complex computations and larger models.

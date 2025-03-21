@@ -72,4 +72,4 @@ You will see Traces for the request, showing that the Group Chat is actually cal
 
 The output of the Group Chat can be seen in the `groupChat` service logs:
 
-![output](./docs/Output.png)
+![output](./docs/output.png)

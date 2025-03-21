@@ -18,6 +18,12 @@ The new type `RemoteChatCompletionAgent` implements the `ChatCompletionAgent` me
 
 I am using an `AgentGroupChat` to show how to use different remote agents togethere in the same chat. It's a useful use case. Since the`RemoteChatCompletionAgent` extends the type `ChatCompletionAgent`, it can be used in the same way as the local agent.
 
+In thie simple Group Chat, we have two agents:
+- `TranslatorAgent`: this agent translates the text to English. [Program.cs](./RemoteAgentTest.Agent1/Program.cs)
+- `SummaryAgent`: this agent summarize the text. [Program.cs](./RemoteAgentTest.Agent2/Program.cs)
+
+The Group Chat will call the `TranslatorAgent` first, and then the `SummaryAgent`.
+
 I am also using [.NET Aspire]https://learn.microsoft.com/en-us/dotnet/aspire/get-started/aspire-overview) to have all the different microservices start and run together. I am also leveraging the .NET Service Discovery to have the correct endpoints for each agent.
 
 .NET Aspire is not required. It just make it easier to run the sample and monitoring all the different microservices. You can run the `RemoteChatCompletionAgent` in any .NET application.

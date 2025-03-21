@@ -1,0 +1,6 @@
+@remote_agent_test.Agent2_HostAddress = http://localhost:5089
+
+GET {{remote_agent_test.Agent2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

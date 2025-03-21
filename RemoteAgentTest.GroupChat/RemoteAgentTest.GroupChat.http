@@ -1,0 +1,6 @@
+@RemoteAgentTest.GroupChat_HostAddress = http://localhost:5271
+
+GET {{RemoteAgentTest.GroupChat_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

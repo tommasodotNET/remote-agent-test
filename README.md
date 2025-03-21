@@ -5,14 +5,13 @@ This repo shows how we could implement a [`RemoteChatCompletionAgent`](./RemoteA
 The new type [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteChatCompletionAgent.cs) implements the `ChatHistoryKernelAgent` methods using a custom HTTP client to send requests to an API that hosts the `ChatCompletionAgent` functionality. This allows us to use the same interface as the local `ChatCompletionAgent`, but with the added benefit of being able to interact with a remote service.
 
 ## Benefits of having a remote agent
+- **Polyglot Support**: The remote agent can be implemented with different programming languages and frameworks, allowing for better integration and support for different platforms.
+- **Reusability**: The remote agent can be reused across different applications and services, allowing for better code reuse and maintainability.
 - **Scalability**: The remote agent can be hosted on a powerful server, allowing for more complex computations and larger models.
-- **Accessibility**: The remote agent can be accessed from anywhere, making it easier to integrate into different applications and services.
 - **Resource Management**: The remote agent can be managed and monitored more easily, allowing for better resource allocation and usage tracking.
 - **Security**: The remote agent can be secured and monitored more easily, allowing for better protection of sensitive data and computations.
 - **Cost Efficiency**: The remote agent can be hosted on a pay-as-you-go basis, allowing for better cost management and resource allocation.
 - **Flexibility**: The remote agent can be updated and maintained more easily, allowing for better support for new features and improvements.
-- **Collaboration**: The remote agent can be shared and used by multiple users, allowing for better collaboration and teamwork.
-- **Polyglot Support**: The remote agent can be implemented with different programming languages and frameworks, allowing for better integration and support for different platforms.
 
 ## Details about the sample
 

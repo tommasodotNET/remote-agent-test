@@ -62,7 +62,9 @@ dotnet run
 
 3. Invoke the AgentGroupChat via http:
 
-http://localhost:<PORT>/remote-group-chat
+```
+http://localhost:{PORT}/remote-group-chat
+```
 
 You will see Traces for the request, showing that the Group Chat is actually calling each remote agent as intructed.
 

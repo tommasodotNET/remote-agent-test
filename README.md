@@ -2,7 +2,7 @@
 
 This repo shows how we could implement a [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteChatCompletionAgent.cs) that can be used to interact with a remote Semantic Kernel `ChatCompletionAgent`.
 
-The new type [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteChatCompletionAgent.cs) implements the `ChatCompletionAgent` methods using a custom HTTP client to send requests to an API that hosts the `ChatCompletionAgent` functionality. This allows us to use the same interface as the local `ChatCompletionAgent`, but with the added benefit of being able to interact with a remote service.
+The new type [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteChatCompletionAgent.cs) implements the `ChatHistoryKernelAgent` methods using a custom HTTP client to send requests to an API that hosts the `ChatCompletionAgent` functionality. This allows us to use the same interface as the local `ChatCompletionAgent`, but with the added benefit of being able to interact with a remote service.
 
 ## Benefits of having a remote agent
 - **Scalability**: The remote agent can be hosted on a powerful server, allowing for more complex computations and larger models.
@@ -16,7 +16,7 @@ The new type [`RemoteChatCompletionAgent`](./RemoteAgentTest.GroupChat/RemoteCha
 
 ## Details about the sample
 
-I am using an `AgentGroupChat` to show how to use different remote agents togethere in the same chat. It's a useful use case. Since the`RemoteChatCompletionAgent` extends the type `ChatCompletionAgent`, it can be used in the same way as the local agent.
+I am using an `AgentGroupChat` to show how to use different remote agents togethere in the same chat. It's a useful use case. Since the`RemoteChatCompletionAgent` extends the type `ChatHistoryKernelAgent`, it can be used in the same way as the local agent.
 
 In thie simple Group Chat, we have two agents:
 - `TranslatorAgent`: this agent translates the text to English. [Program.cs](./RemoteAgentTest.Agent1/Program.cs)

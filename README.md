@@ -51,6 +51,7 @@ Using API Keys:
   "ConnectionStrings": {
     "openAiConnectionName": "Endpoint=https://{account_name}.openai.azure.com/;Key={api_key};"
   },
+```
 
 2. Run the sample
 

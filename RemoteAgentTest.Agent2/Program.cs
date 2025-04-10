@@ -50,6 +50,15 @@ builder.Services.AddSingleton(builder => {
     
     return kernelBuilder.Build();
 });
+builder.Services.AddSingleton<ChatCompletionAgent>(builder =>
+{
+    return new()
+    {
+        Name = "SummarizationAgent",
+        Instructions = "Summarize user input",
+        Kernel = builder.GetRequiredService<Kernel>()
+    };
+});
 
 var app = builder.Build();
 
@@ -61,47 +70,47 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-app.MapPost("/agent/invoke", async (Kernel kernel, ChatHistory history) =>
+app.MapGet("/agent/details", (ChatCompletionAgent agent) =>
 {
-    ChatCompletionAgent summaryAgent =
-    new()
+    var details = new 
     {
-        Name = "SummarizationAgent",
-        Instructions = "Summarize user input",
-        Kernel = kernel
+        Name = agent.Name,
+        Instructions = agent.Instructions
     };
+    return JsonSerializer.Serialize(details);
+})
+.WithName("GetAgentDetails");
 
-    // Generate the agent response(s)
-    await foreach (var response in summaryAgent.InvokeAsync(history))
+
+app.MapPost("/agent/invoke", async (ChatCompletionAgent agent, HttpResponse response, ChatHistory history) =>
+{
+    response.Headers.Append("Content-Type", "application/json");
+
+    var thread = new ChatHistoryAgentThread();
+
+    await foreach (var chatResponse in agent.InvokeAsync(history, thread))
     {
-        response.AuthorName = summaryAgent.Name;
+        chatResponse.Message.AuthorName = agent.Name;
         
-        return JsonSerializer.Serialize(response);
+        return JsonSerializer.Serialize(chatResponse.Message);
     }
 
     return null;
 })
 .WithName("InvokeSummaryAgent");
 
-app.MapPost("/agent/invoke-streaming", async (Kernel kernel, HttpResponse response, ChatHistory history) =>
+app.MapPost("/agent/invoke-streaming", async (ChatCompletionAgent agent, HttpResponse response, ChatHistory history) =>
 {
-    ChatCompletionAgent summaryAgent =
-    new()
-    {
-        Name = "SummarizationAgent",
-        Instructions = "Summarize user input",
-        Kernel = kernel
-    };
-
     response.Headers.Append("Content-Type", "application/jsonl");
 
-    var chatResponse = summaryAgent.InvokeStreamingAsync(history);
+    var thread = new ChatHistoryAgentThread();
+
+    var chatResponse = agent.InvokeStreamingAsync(history, thread);
     await foreach (var delta in chatResponse)
     {
-        var message = new StreamingChatMessageContent(AuthorRole.Assistant, delta.Content)
+        var message = new StreamingChatMessageContent(AuthorRole.Assistant, delta.Message.Content)
         {
-            AuthorName = summaryAgent.Name
+            AuthorName = agent.Name
         };
 
         await response.WriteAsync(JsonSerializer.Serialize(message));

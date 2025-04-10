@@ -50,6 +50,15 @@ builder.Services.AddSingleton(builder => {
     
     return kernelBuilder.Build();
 });
+builder.Services.AddSingleton<ChatCompletionAgent>(builder =>
+{
+    return new()
+    {
+        Name = "TranslatorAgent",
+        Instructions = "Translate user input in english",
+        Kernel = builder.GetRequiredService<Kernel>()
+    };
+});
 
 var app = builder.Build();
 
@@ -61,49 +70,46 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-
-app.MapPost("/agent/invoke", async (Kernel kernel, HttpResponse response, ChatHistory history) =>
+app.MapGet("/agent/details", (ChatCompletionAgent agent) =>
 {
-    ChatCompletionAgent translatorAgent =
-    new()
+    var details = new 
     {
-        Name = "TranslatorAgent",
-        Instructions = "Translate user input in english",
-        Kernel = kernel
+        Name = agent.Name,
+        Instructions = agent.Instructions
     };
+    return JsonSerializer.Serialize(details);
+})
+.WithName("GetAgentDetails");
 
+app.MapPost("/agent/invoke", async (ChatCompletionAgent agent, HttpResponse response, ChatHistory history) =>
+{
     response.Headers.Append("Content-Type", "application/json");
 
-    // Generate the agent response(s)
-    await foreach (var chatResponse in translatorAgent.InvokeAsync(history))
+    var thread = new ChatHistoryAgentThread();
+
+    await foreach (var chatResponse in agent.InvokeAsync(history, thread))
     {
-        chatResponse.AuthorName = translatorAgent.Name;
+        chatResponse.Message.AuthorName = agent.Name;
         
-        return JsonSerializer.Serialize(chatResponse);
+        return JsonSerializer.Serialize(chatResponse.Message);
     }
 
     return null;
 })
 .WithName("InvokeTranslatorAgent");
 
-app.MapPost("/agent/invoke-streaming", async (Kernel kernel, HttpResponse response, ChatHistory history) =>
+app.MapPost("/agent/invoke-streaming", async (ChatCompletionAgent agent, HttpResponse response, ChatHistory history) =>
 {
-    ChatCompletionAgent translatorAgent =
-    new()
-    {
-        Name = "TranslatorAgent",
-        Instructions = "Translate user input in english",
-        Kernel = kernel
-    };
-
     response.Headers.Append("Content-Type", "application/jsonl");
 
-    var chatResponse = translatorAgent.InvokeStreamingAsync(history);
+    var thread = new ChatHistoryAgentThread();
+
+    var chatResponse = agent.InvokeStreamingAsync(history, thread);
     await foreach (var delta in chatResponse)
     {
-        var message = new StreamingChatMessageContent(AuthorRole.Assistant, delta.Content)
+        var message = new StreamingChatMessageContent(AuthorRole.Assistant, delta.Message.Content)
         {
-            AuthorName = translatorAgent.Name
+            AuthorName = agent.Name
         };
         
         await response.WriteAsync(JsonSerializer.Serialize(message));

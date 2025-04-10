@@ -66,8 +66,8 @@ app.UseHttpsRedirection();
 app.MapGet("/remote-group-chat", async (Kernel kernel, TranslatorAgentHttpClient translatorAgentHttpClient, SumamryAgentHttpClient sumamryAgentHttpClient) =>
 {
     // Use the clients as needed here
-    var translatorAgent = new RemoteChatCompletionAgent("translatoragent", translatorAgentHttpClient);
-    var summaryAgent = new RemoteChatCompletionAgent("summaryagent", sumamryAgentHttpClient);
+    var translatorAgent = new RemoteChatCompletionAgent(translatorAgentHttpClient);
+    var summaryAgent = new RemoteChatCompletionAgent(sumamryAgentHttpClient);
 
     var terminateFunction = KernelFunctionFactory.CreateFromPrompt(
         $$$"""

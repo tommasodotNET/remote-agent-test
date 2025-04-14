@@ -11,6 +11,12 @@ var summaryAgent = builder.AddProject<Projects.RemoteAgentTest_Agent2>("summarya
 var remoteChatCompletionAgent = builder.AddProject<Projects.RemoteAgentTest_GroupChat>("groupChat")
     .WithReference(openai)
     .WithReference(translatorAgent)
-    .WithReference(summaryAgent);
+    .WithReference(summaryAgent)
+    .WithHttpCommand("/remote-group-chat", "Invoke Chat",
+        commandOptions: new()
+        {
+            Method = HttpMethod.Get
+        }
+    );
 
 builder.Build().Run();

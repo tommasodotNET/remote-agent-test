@@ -12,47 +12,16 @@ using RemoteAgentTest.GroupChat;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var otelExporterEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
-var otelExporterHeaders = builder.Configuration["OTEL_EXPORTER_OTLP_HEADERS"];
-
 AppContext.SetSwitch("Microsoft.SemanticKernel.Experimental.GenAI.EnableOTelDiagnosticsSensitive", true);
-
-var loggerFactory = LoggerFactory.Create(builder =>
-{
-    // Add OpenTelemetry as a logging provider
-    builder.AddOpenTelemetry(options =>
-    {
-        options.AddOtlpExporter(exporter => {exporter.Endpoint = new Uri(otelExporterEndpoint); exporter.Headers = otelExporterHeaders; exporter.Protocol = OtlpExportProtocol.Grpc;});
-        // Format log messages. This defaults to false.
-        options.IncludeFormattedMessage = true;
-    });
-
-    builder.AddTraceSource("Microsoft.SemanticKernel");
-    builder.SetMinimumLevel(LogLevel.Information);
-});
-
-using var traceProvider = Sdk.CreateTracerProviderBuilder()
-    .AddSource("Microsoft.SemanticKernel*")
-    .AddOtlpExporter(exporter => {exporter.Endpoint = new Uri(otelExporterEndpoint); exporter.Headers = otelExporterHeaders; exporter.Protocol = OtlpExportProtocol.Grpc;})
-    .Build();
-
-using var meterProvider = Sdk.CreateMeterProviderBuilder()
-    .AddMeter("Microsoft.SemanticKernel*")
-    .AddOtlpExporter(exporter => {exporter.Endpoint = new Uri(otelExporterEndpoint); exporter.Headers = otelExporterHeaders; exporter.Protocol = OtlpExportProtocol.Grpc;})
-    .Build();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 builder.AddServiceDefaults();
+builder.AddAzureOpenAIClient("openAiConnectionName");
+builder.Services.AddOpenApi();
 builder.Services.AddHttpClient<TranslatorAgentHttpClient>(client => { client.BaseAddress = new("https+http://translatoragent"); });
 builder.Services.AddHttpClient<SumamryAgentHttpClient>(client => { client.BaseAddress = new("https+http://summaryagent"); });
-builder.AddAzureOpenAIClient("openAiConnectionName");
-builder.Services.AddSingleton(builder => {
-    var kernelBuilder = Kernel.CreateBuilder();
-    kernelBuilder.AddAzureOpenAIChatCompletion("gpt-4o", builder.GetService<AzureOpenAIClient>());
-    return kernelBuilder.Build();
-});
+builder.Services.AddKernel().AddAzureOpenAIChatCompletion("gpt-4o");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
